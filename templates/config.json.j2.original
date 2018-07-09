@@ -17,8 +17,7 @@
     "bind_addr": "{{ consul_bind_address }}",
     "advertise_addr": "{{ consul_advertise_address }}",
     "advertise_addr_wan": "{{ consul_advertise_address_wan }}",
-    "client_addr": "{{ consul_bind_address }}",
-    {##
+    "client_addr": "{{ consul_client_address }}",
     "addresses": {
         {% if consul_version is version_compare('0.8.0', '<') %}
             "rpc": "{{ consul_addresses.rpc }}",
@@ -28,7 +27,6 @@
         "https": "{{ consul_addresses.https }}"
 
     },
-    ##}
     {## Ports Used ##}
     "ports": {
         {% if consul_version is version_compare('0.8.0', '<') %}
@@ -107,8 +105,27 @@
     {# Server Settings #}
     {% if (item.config_version == 'server') or (item.config_version == 'bootstrap') %}
 
-    {# jk edits #}
-    "bootstrap_expect": {{ _consul_lan_servercount | int }},
+    {## Bootstrap settings ##}
+    "bootstrap": {{ (item.config_version == 'bootstrap') | bool | to_json }},
+    {% if consul_bootstrap_expect and not (item.config_version == 'bootstrap') %}
+        "bootstrap_expect": {{ _consul_lan_servercount | int }},
+
+        {## AutoPilot ##}
+        {% if consul_autopilot_enable %}
+        "autopilot": {
+            "cleanup_dead_servers": {{ consul_autopilot_cleanup_dead_Servers | bool | to_json }},
+            "last_contact_threshold": "{{ consul_autopilot_last_contact_threshold }}",
+            "max_trailing_logs": {{ consul_autopilot_max_trailing_logs }},
+            "server_stabilization_time": "{{ consul_autopilot_server_stabilization_time }}"{{ ',' if consul_enterprise else '' }}
+            {% if consul_enterprise %}
+            "redundancy_zone_tag":  "{{ consul_autopilot_redundancy_zone_tag }}",
+            "disable_upgrade_migration": {{ consul_autopilot_disable_upgrade_migration | bool | to_json }},
+            "upgrade_version_tag": "{{ consul_autopilot_upgrade_version_tag }}"
+            {% endif %}
+        },
+        {% endif %}
+
+    {% endif %}
 
     {## WAN Join ##}
     "retry_interval_wan": "{{ consul_retry_interval_wan }}",

@@ -65,6 +65,9 @@
 
     - name: Include directory settings
       import_tasks: dirs.yml
+    
+    - name: Include bashrc mods
+      import_tasks: bashrc.yml
 
     - name: Check for existing Consul binary
       stat:
