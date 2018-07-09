@@ -43,9 +43,10 @@ fi
 
 SCRIPT
 
+
 ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "site.yml"
 BOX_MEM = ENV['BOX_MEM'] || "1024"
-BOX_NAME =  ENV['BOX_NAME'] || "debian/stretch64"
+BOX_NAME =  ENV['BOX_NAME'] || "ubuntu/xenial64"
 CLUSTER_HOSTS = ENV['CLUSTER_HOSTS'] || "vagrant_hosts"
 CONSUL_ACL_ENABLE = ENV['CONSUL_ACL_ENABLE'] || "false"
 CONSUL_ATLAS_ENABLE = ENV['CONSUL_ATLAS_ENABLE'] || "false"
@@ -64,6 +65,9 @@ Vagrant.require_version ">= 1.9.0"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if BOX_NAME.include? "freebsd"
     CONSUL_IFACE = "em1"
+  end
+  if BOX_NAME.include? "ubuntu"
+    CONSUL_IFACE = "enp0s8"
   end
   # Configure 3 Consul nodes
   config.vm.define :consul1 do |consul1_config|
