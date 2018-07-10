@@ -1,6 +1,0 @@
----
-# File: FreeBSD.yml - FreeBSD OS variables for Consul
-
-consul_os_packages:
-  - git
-  - unzip

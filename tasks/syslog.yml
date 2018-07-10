@@ -9,7 +9,6 @@
     group: root
     mode: 0444
   when:
-    - ansible_os_family != 'Windows'
     - consul_syslog_enable | bool
   notify:
     - restart rsyslog

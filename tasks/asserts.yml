@@ -5,29 +5,7 @@
   fail:
     msg: "{{ ansible_distribution }} is not currently supported by this role."
   when:
-    - ansible_distribution not in ['RedHat', 'CentOS', 'Debian', 'FreeBSD', 'SmartOS', 'Ubuntu', 'Archlinux']
-    - ansible_os_family != 'Windows'
-
-- name: Check CentOS or Red Hat version
-  fail:
-    msg: "{{ ansible_distribution_version }} is not a supported version."
-  when:
-    - ansible_distribution in ['RedHat', 'CentOS']
-    - ansible_distribution_version is version_compare(6, '<')
-
-- name: Check Debian version
-  fail:
-    msg: "{{ ansible_distribution_version }} is not a supported version."
-  when:
-    - ansible_distribution == "Debian"
-    - ansible_distribution_version is version_compare(8, '<')
-
-- name: Check FreeBSD version
-  fail:
-    msg: "{{ ansible_distribution_version }} is not a supported version."
-  when:
-    - ansible_distribution == "FreeBSD"
-    - ansible_distribution_version is version_compare(10, '<')
+    - ansible_distribution not in [ 'Ubuntu' ]
 
 - name: Check Ubuntu version
   fail:
@@ -40,16 +18,7 @@
   fail:
     msg: "The ethernet interface specified by consul_iface was not found."
   when:
-    - ansible_os_family != 'Windows'
     - consul_iface not in ansible_interfaces
-
-- name: Check iptables on Red Hat or CentOS
-  fail:
-    msg: "Use DNSmasq instead of iptables on {{ ansible_distribution }}."
-  when:
-    - consul_iptables_enable | bool
-    - ansible_distribution in ['RedHat', 'CentOS']
-    - ansible_distribution_version is version_compare(6, '>=')
 
 - name: Check for both Dnsmasq and iptables enabled
   fail:
