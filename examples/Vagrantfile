@@ -37,20 +37,17 @@ if test "$PLATFORM" = "freebsd"; then
     fi
 fi
 
-if [ -f "/etc/debian_version" ]; then
-  test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)
-fi
-
 SCRIPT
 
 
 ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "site.yml"
 BOX_MEM = ENV['BOX_MEM'] || "1024"
-BOX_NAME =  ENV['BOX_NAME'] || "ubuntu/xenial64"
+BOX_NAME =  ENV['BOX_NAME'] || "bento/ubuntu-16.04"
 CLUSTER_HOSTS = ENV['CLUSTER_HOSTS'] || "vagrant_hosts"
 CONSUL_ACL_ENABLE = ENV['CONSUL_ACL_ENABLE'] || "false"
 CONSUL_ATLAS_ENABLE = ENV['CONSUL_ATLAS_ENABLE'] || "false"
-CONSUL_DNSMASQ_ENABLE = ENV['CONSUL_DNSMASQ_ENABLE'] || "false"
+#CONSUL_DNSMASQ_ENABLE = ENV['CONSUL_DNSMASQ_ENABLE'] || "true"
+CONSUL_DNSMASQ_ENABLE = "true"
 CONSUL_LOGLEVEL = ENV['CONSUL_LOGLEVEL'] || "INFO"
 CONSUL_LOG_PATH = ENV['CONSUL_LOG_PATH'] || "/var/log/consul"
 CONSUL_LOG_FILE = ENV['CONSUL_LOG_FILE'] || "consul.log"
@@ -67,7 +64,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     CONSUL_IFACE = "em1"
   end
   if BOX_NAME.include? "ubuntu"
-    CONSUL_IFACE = "enp0s8"
+    CONSUL_IFACE = "eth1"
   end
   # Configure 3 Consul nodes
   config.vm.define :consul1 do |consul1_config|
@@ -77,6 +74,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     consul1_config.vm.synced_folder ".", "/vagrant", disabled: true
     consul1_config.ssh.shell = "/bin/sh"
     consul1_config.vm.network :private_network, ip: "10.1.42.210"
+    # "dns": 8600, 
+    consul1_config.vm.network "forwarded_port", guest: 8600, host: 8600
+    # "http": 8500, 
+    consul1_config.vm.network "forwarded_port", guest: 8500, host: 8500
+    # "https": 8080, 
+    consul1_config.vm.network "forwarded_port", guest: 8080, host: 8080
     consul1_config.vm.hostname = "consul1.consul"
     consul1_config.ssh.forward_agent = true
     consul1_config.vm.provider "virtualbox" do |v|
@@ -154,7 +157,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       #
       ansible.extra_vars = {
         consul_log_level: "DEBUG",
-        consul_client_address: "10.1.42.230"
+        # consul_client_address: "10.1.42.230"
       }
       ansible.playbook = ANSIBLE_PLAYBOOK
       ansible.limit = "all"

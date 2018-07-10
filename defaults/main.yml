@@ -112,7 +112,7 @@ consul_advertise_addresses:
   serf_lan: "{{ consul_advertise_addresses_serf_lan | default(consul_advertise_address+':'+consul_ports.serf_lan) }}"
   serf_wan: "{{ consul_advertise_addresses_serf_wan | default(consul_advertise_address_wan+':'+consul_ports.serf_wan) }}"
   rpc: "{{ consul_advertise_addresses_rpc | default(consul_bind_address+':'+consul_ports.server) }}"
-consul_client_address: '127.0.0.1'
+consul_client_address: "{{ consul_bind_address }}"
 consul_addresses:
   dns: "{{ consul_addresses_dns | default(consul_client_address, true) }}"
   http: "{{ consul_addresses_http | default(consul_client_address, true) }}"
@@ -120,6 +120,7 @@ consul_addresses:
   rpc: "{{ consul_addresses_rpc | default(consul_client_address, true) }}"
 
 ### Ports
+consul_ports_https: 8080
 consul_ports:
   dns: "{{ consul_ports_dns | default('8600', true) }}"
   http: "{{ consul_ports_http | default('8500', true) }}"
@@ -167,14 +168,20 @@ consul_acl_replication_token: "{{ lookup('env','CONSUL_ACL_REPLICATION_TOKEN') |
 consul_encrypt_enable: "{{ lookup('env','CONSUL_ENCRYPT_ENABLE') | default(true, true) }}"
 
 ## TLS
-consul_tls_enable: "{{ lookup('env','CONSUL_TLS_ENABLE') | default(false, true) }}"
-consul_tls_src_files: "{{ lookup('env','CONSUL_TLS_SRC_FILES') | default(role_path+'/files', true) }}"
+# consul_tls_enable: "{{ lookup('env','CONSUL_TLS_ENABLE') | default(false, true) }}"
+consul_tls_enable: true
+# consul_tls_src_files: "{{ lookup('env','CONSUL_TLS_SRC_FILES') | default(role_path+'/files', true) }}"
+consul_tls_src_files: "{{ lookup('env','CONSUL_TLS_SRC_FILES') | default(role_path+'/files/tls', true) }}"
 
 consul_tls_dir: "{{ lookup('env','CONSUL_TLS_DIR') | default('/etc/consul/ssl', true) }}"
 
-consul_tls_ca_crt: "{{ lookup('env','CONSUL_TLS_CA_CRT') | default('ca.crt', true) }}"
-consul_tls_server_crt: "{{ lookup('env','CONSUL_SERVER_CRT') | default('server.crt', true) }}"
-consul_server_key: "{{ lookup('env','CONSUL_SERVER_KEY') | default('server.key', true) }}"
+# consul_tls_ca_crt: "{{ lookup('env','CONSUL_TLS_CA_CRT') | default('ca.crt', true) }}"
+# consul_tls_server_crt: "{{ lookup('env','CONSUL_SERVER_CRT') | default('server.crt', true) }}"
+# consul_server_key: "{{ lookup('env','CONSUL_SERVER_KEY') | default('server.key', true) }}"
+consul_tls_ca_crt: "consul-ca.pem"
+consul_tls_server_crt: "server.pem"
+consul_server_key: "server-key.pem"
+
 consul_tls_copy_keys: true
 consul_tls_verify_incoming: false
 consul_tls_verify_outgoing: true
@@ -182,7 +189,8 @@ consul_tls_verify_server_hostname: false
 consul_tls_files_remote_src: no
 
 ## DNS
-consul_dnsmasq_enable: "{{ lookup('env','CONSUL_DNSMASQ_ENABLE') | default(false, true) }}"
+# consul_dnsmasq_enable: "{{ lookup('env','CONSUL_DNSMASQ_ENABLE') | default(false, true) }}"
+consul_dnsmasq_enable: true
 consul_dnsmasq_consul_address: "\
   {# Use localhost if DNS is listening on all interfaces #}\
   {% if consul_addresses.dns == '0.0.0.0' %}\

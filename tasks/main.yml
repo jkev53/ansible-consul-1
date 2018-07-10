@@ -233,7 +233,7 @@
     - name: Reload systemd
       systemd:
         daemon_reload: yes
-      when: systemd_unit | changed
+      when: systemd_unit is changed
 
     - name: Create smf manifest
       template:
@@ -248,13 +248,13 @@
     - name: Import smf manifest
       shell: "svccfg import {{ consul_smf_manifest }}"
       when:
-        - smfmanifest | changed
+        - smfmanifest is changed
         - ansible_os_family == "Solaris"
 
     - name: Import smf script
       shell: "svcadm refresh consul"
       when:
-        - smfmanifest | changed
+        - smfmanifest is changed
         - ansible_os_family == "Solaris"
 
     - block:
@@ -264,7 +264,7 @@
           name: consul
           state: started
           enabled: yes
-
+      
       - name: Check Consul HTTP API (via TCP socket)
         wait_for:
           delay: 15
@@ -276,7 +276,7 @@
         wait_for:
           delay: 15
           path: "{{ consul_addresses.http | replace('unix://', '', 1) }}"
-        when: consul_addresses.http | match("unix://*")
+        when: consul_addresses.http is match("unix://*")
 
       - name: Create bootstrapped state file
         file:
