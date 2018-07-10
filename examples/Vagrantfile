@@ -74,12 +74,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     consul1_config.vm.synced_folder ".", "/vagrant", disabled: true
     consul1_config.ssh.shell = "/bin/sh"
     consul1_config.vm.network :private_network, ip: "10.1.42.210"
-    # "dns": 8600, 
-    consul1_config.vm.network "forwarded_port", guest: 8600, host: 8600
-    # "http": 8500, 
-    consul1_config.vm.network "forwarded_port", guest: 8500, host: 8500
-    # "https": 8080, 
-    consul1_config.vm.network "forwarded_port", guest: 8080, host: 8080
+    # # "dns": 8600, 
+    # consul1_config.vm.network "forwarded_port", guest: 8600, host: 8600
+    # # "http": 8500, 
+    # consul1_config.vm.network "forwarded_port", guest: 8500, host: 8500
+    # # "https": 8080, 
+    # consul1_config.vm.network "forwarded_port", guest: 8080, host: 8080
     consul1_config.vm.hostname = "consul1.consul"
     consul1_config.ssh.forward_agent = true
     consul1_config.vm.provider "virtualbox" do |v|
