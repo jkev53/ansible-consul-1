@@ -103,11 +103,11 @@ consul_addresses:
   rpc: "{{ consul_addresses_rpc | default(consul_client_address, true) }}"
 
 ### Ports
-consul_ports_https: 8080
+consul_ports_https: '8443'
 consul_ports:
   dns: "{{ consul_ports_dns | default('8600', true) }}"
   http: "{{ consul_ports_http | default('8500', true) }}"
-  https: "{{ consul_ports_https | default('-1', true) }}"
+  https: "{{ consul_ports_https | default('8443', true) }}"
   rpc: "{{ consul_ports_rpc | default('8400', true) }}"
   serf_lan: "{{ consul_ports_serf_lan | default('8301', true) }}"
   serf_wan: "{{ consul_ports_serf_wan | default('8302', true) }}"

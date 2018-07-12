@@ -7,4 +7,14 @@
   become: yes
   become_user: root
   roles:
-    - { role: brianshumate.consul }
+    - { role: ufw }
+    - { role: consul }
+
+- name: Assemble Consul cluster
+  hosts: vaults
+  any_errors_fatal: true
+  become: yes
+  become_user: root
+  roles:
+    - { role: docker }
+    - { role: vault }

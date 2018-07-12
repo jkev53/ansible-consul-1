@@ -1,6 +1,7 @@
 ---
 # File: main.yml - Main tasks for Consul
 
+#- debug: ms="ssh:{{ ansible_ssh_port }}"
 - name: Install python dependencies
   when:
     - consul_install_dependencies | bool
